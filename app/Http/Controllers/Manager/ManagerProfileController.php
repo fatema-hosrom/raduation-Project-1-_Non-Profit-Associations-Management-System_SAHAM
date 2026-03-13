@@ -12,25 +12,28 @@ class ManagerProfileController extends Controller
 {
 
     // عرض الملف الشخصي للمدير
-    public function profile()
+    public function profile(Request $request)
 
     {
-        $manager = Manager::findOrFail(Auth::guard('manager')->user()->id);
+        $managerId = $request->session()->get('manager_id');
+        $manager = Manager::findOrFail($managerId);
         return view('html.manager.profile.profile', compact('manager'));
     }
 
     // تعديل الملف الشخصي للمدير
 
     // عرض نموذج التعديل)(GET)
-    public function editProfile()
+    public function editProfile(Request $request)
     {
-        $manager = Manager::findOrFail(Auth::guard('manager')->user()->id);
+        $managerId = $request->session()->get('manager_id');
+        $manager = Manager::findOrFail($managerId);
         return view('html.manager.profile.edit_profile', compact('manager'));
     }
 
     public function updateProfile(Request $request)
     {
-        $manager = Manager::findOrFail(Auth::guard('manager')->id());
+        $managerId = $request->session()->get('manager_id');
+        $manager = Manager::findOrFail($managerId);
         try {
             $data = $request->validate([
                 'full_name' => 'required|string|max:255',

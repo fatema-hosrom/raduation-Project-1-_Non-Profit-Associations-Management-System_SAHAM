@@ -56,7 +56,7 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link" href="{{ route('supervisor.logout') }}" title="تسجيل الخروج">
+            <a class="nav-link" href="{{ route('auth.logout') }}" title="تسجيل الخروج">
                 <i class="fas fa-sign-out-alt"></i>
                 تسجيل الخروج
             </a>

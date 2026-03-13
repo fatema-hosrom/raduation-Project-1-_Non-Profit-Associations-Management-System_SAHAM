@@ -137,6 +137,27 @@
     <!-- Main Content -->
     <main class="container mx-auto my-2 px-4">
 
+        <!-- رسائل النجاح والخطأ -->
+        @if (session('success'))
+            <div id="successMessage"
+                class="alert alert-success alert-dismissible fade show position-fixed top-0 end-0 m-4 shadow-lg"
+                role="alert" style="z-index: 9999; min-width: 300px;">
+                <i class="fas fa-check-circle ms-2"></i>
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        @if (session('error'))
+            <div id="errorMessage"
+                class="alert alert-danger alert-dismissible fade show position-fixed top-0 end-0 m-4 shadow-lg"
+                role="alert" style="z-index: 9999; min-width: 300px;">
+                <i class="fas fa-exclamation-circle ms-2"></i>
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
         @yield('content')
     </main>
 
@@ -160,7 +181,7 @@
                 <a href="#" class="hover:text-yellow-300 transition">سياسة الخصوصية</a>
                 <a href="#" class="hover:text-yellow-300 transition">الشروط</a>
                 <a href="#" class="hover:text-yellow-300 transition">تواصل معنا</a>
-                <a href="{{ route('manager.login') }}" class="hover:text-yellow-300 transition">تسجيل الدخول
+                <a href="{{ route('auth.login') }}" class="hover:text-yellow-300 transition">تسجيل الدخول
                     الموظفين</a>
             </div>
 
@@ -191,31 +212,6 @@
                 if (i === index) slide.classList.remove('opacity-0'), slide.classList.add('opacity-100');
             });
         }
-
-        let slideInterval = setInterval(() => {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-        }, 5000);
-
-        document.getElementById('prev-slide').addEventListener('click', () => {
-            currentSlide = (currentSlide - 1 + slides.length) % slides.length;
-            showSlide(currentSlide);
-            resetInterval();
-        });
-        document.getElementById('next-slide').addEventListener('click', () => {
-            currentSlide = (currentSlide + 1) % slides.length;
-            showSlide(currentSlide);
-            resetInterval();
-        });
-
-        function resetInterval() {
-            clearInterval(slideInterval);
-            slideInterval = setInterval(() => {
-                currentSlide = (currentSlide + 1) % slides.length;
-                showSlide(currentSlide);
-            }, 5000);
-        }
-    </script>
 
     @stack('scripts')
 </body>

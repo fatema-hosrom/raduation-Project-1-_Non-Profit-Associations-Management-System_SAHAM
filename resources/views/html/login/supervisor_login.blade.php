@@ -38,8 +38,8 @@
         </form>
 
         <div class="login-footer">
-            <p>هل أنت مدير فعاليات؟ <a href="{{ url('/manager/login') }}">تسجيل الدخول كمدير فعاليات</a></p>
-            <p><a href="{{ route('supervisor.logout') }}">تسجيل الخروج</a></p>
+            <p>هل أنت مدير فعاليات؟ <a href="{{ route('auth.login') }}">تسجيل الدخول كمدير فعاليات</a></p>
+            <p><a href="{{ route('auth.logout') }}">تسجيل الخروج</a></p>
         </div>
     </div>
 @endsection

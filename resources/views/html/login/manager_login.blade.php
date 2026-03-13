@@ -38,8 +38,8 @@
         </form>
 
         <div class="login-footer">
-            <p>هل أنت مشرف؟ <a href="{{ url('/supervisor/login') }}">تسجيل الدخول كمشرف</a></p>
-            <p><a href="{{ route('manager.logout') }}">تسجيل الخروج</a></p>
+            <p>هل أنت مشرف؟ <a href="{{ route('auth.login') }}">تسجيل الدخول كمشرف</a></p>
+            <p><a href="{{ route('auth.logout') }}">تسجيل الخروج</a></p>
         </div>
     </div>
 @endsection

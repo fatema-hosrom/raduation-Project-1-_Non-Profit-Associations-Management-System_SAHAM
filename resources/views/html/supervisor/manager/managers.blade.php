@@ -48,7 +48,12 @@
                             <span class="manager-role"><i class="fas fa-user-tie"></i>
                                 @php
                                     $type = $manager->manager_type ?? '';
-                                    $role_name = $type === 'financial' ? 'مدير مالي' : ($type === 'activities' ? 'مدير أنشطة' : 'غير محدد');
+                                    $role_name =
+                                        $type === 'financial'
+                                            ? 'مدير مالي'
+                                            : ($type === 'activities'
+                                                ? 'مدير أنشطة'
+                                                : 'غير محدد');
                                 @endphp
                                 {{ $role_name }}
                             </span>

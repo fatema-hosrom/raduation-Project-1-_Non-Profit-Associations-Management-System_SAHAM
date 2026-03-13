@@ -34,8 +34,23 @@ class OrganizationActivity extends Model
         return $this->hasOne(ActivityVolunteerRequirements::class, 'activity_id');
     }
 
+    public function assignments()
+    {
+        return $this->hasMany(ActivityVolunteerAssignment::class, 'activity_id');
+    }
+
     public function manager()
     {
         return $this->belongsTo(Manager::class, 'manager_id');
+    }
+
+    public function donations()
+    {
+        return $this->hasMany(Donation::class, 'activity_id');
+    }
+
+    public function expenses()
+    {
+        return $this->hasMany(Expense::class, 'activity_id');
     }
 }

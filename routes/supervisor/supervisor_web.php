@@ -3,15 +3,21 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Supervisor\ManagerController;
 use App\Http\Middleware\CheckSupervisorAuth;
-use App\Http\Controllers\Auth\SupervisorAuthController;
+use App\Http\Controllers\Auth\UnifiedAuthController;
 use App\Http\Controllers\Supervisor\SupervisorProfileController;
 use App\Http\Controllers\Supervisor\OrganizationActivityController;
 use App\Http\Controllers\Supervisor\SupervisorVolunteerController;
 
-// Auth routes (outside middleware)
-Route::get('/supervisor/login', [SupervisorAuthController::class, 'showLogin'])->name('supervisor.login');
-Route::post('/supervisor/login', [SupervisorAuthController::class, 'login'])->name('supervisor.login.post');
-Route::get('/supervisor/logout', [SupervisorAuthController::class, 'logout'])->name('supervisor.logout');
+// Auth routes - توجيه إلى النظام الموحد
+Route::get('/supervisor/login', function () {
+    return redirect()->route('auth.login');
+});
+Route::post('/supervisor/login', function () {
+    return redirect()->route('auth.login');
+});
+Route::get('/supervisor/logout', function () {
+    return redirect()->route('auth.logout');
+});
 
 Route::middleware([CheckSupervisorAuth::class])->prefix('supervisor')->name('supervisor.')->group(function () {
     // لوحة تحكم المشرف

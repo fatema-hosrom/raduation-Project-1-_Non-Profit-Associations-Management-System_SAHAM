@@ -3,24 +3,23 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PublicController;
 use App\Http\Controllers\VolunteerController;
+use App\Http\Controllers\Auth\UnifiedAuthController;
 
 require __DIR__ . '/manager/manager_web.php';
 require __DIR__ . '/supervisor/supervisor_web.php';
+require __DIR__ . '/financial/financial_web.php';
 
 /*|--------------------------------------------------------------------------
 | Public Routes
 |--------------------------------------------------------------------------*/
 route::prefix('/sahem')->name('public.')->group(function () {
     // الصفحة الرئيسية
-    Route::get('/home', [PublicController::class, 'home'])
-        ->name('home');
+    Route::get('/home', [PublicController::class, 'home'])->name('home');
     // الجمعيات
-    Route::get('/organizations', [PublicController::class, 'organizations'])
-        ->name('organizations.index');
+    Route::get('/organizations', [PublicController::class, 'organizations'])->name('organizations.index');
 
     // صفحة جمعية معينة
-    Route::get('/organizations/{id}', [PublicController::class, 'showOrganization'])
-        ->name('organizations.show');
+    Route::get('/organizations/{id}', [PublicController::class, 'showOrganization'])->name('organizations.show');
 
     /*
 |--------------------------------------------------------------------------
@@ -47,3 +46,10 @@ route::prefix('/sahem')->name('public.')->group(function () {
     Route::get('/volunteer/register', [VolunteerController::class, 'volunteerRegister'])->name('volunteer.register');
     Route::post('/volunteer/register', [VolunteerController::class, 'volunteerStore'])->name('volunteer.store');
 });
+
+/*|--------------------------------------------------------------------------
+| Unified Authentication Routes
+|--------------------------------------------------------------------------*/
+Route::get('/login', [UnifiedAuthController::class, 'showLogin'])->name('auth.login');
+Route::post('/login', [UnifiedAuthController::class, 'login'])->name('auth.login.post');
+Route::get('/logout', [UnifiedAuthController::class, 'logout'])->name('auth.logout');

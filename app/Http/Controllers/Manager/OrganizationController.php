@@ -40,9 +40,9 @@ class OrganizationController extends Controller
     //=================================================================================
     // إضافة جمعية
     // عرض نموذج إنشاء جمعية (GET)
-    public function addOrganization(Request $request)
+    public function addOrganization()
     {
-        $managerId = session('manager_id');
+
 
         return view('html.manager.organizations.add_organization');
     }

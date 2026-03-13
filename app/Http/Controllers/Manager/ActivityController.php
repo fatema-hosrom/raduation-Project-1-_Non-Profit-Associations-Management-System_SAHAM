@@ -8,6 +8,7 @@ use App\Models\OrganizationActivity;
 use App\Models\ActivityDonationSettings;
 use App\Models\ActivityVolunteerRequirements;
 use App\Models\Manager;
+use App\Models\ActivityResult;
 use Illuminate\Validation\Rule;
 use Exception;
 
@@ -32,9 +33,19 @@ class ActivityController extends Controller
     public function getActivities(Request $request)
     {
         $managerId = session('manager_id');
-        $activities = OrganizationActivity::where('manager_id', $managerId)
-            ->orderByDesc('created_at')
-            ->get();
+        $query = OrganizationActivity::where('manager_id', $managerId);
+
+        // بحث حسب العنوان أو الوصف
+        if ($request->has('search') && $request->search !== '') {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('title', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+            });
+        }
+
+        $activities = $query->orderByDesc('created_at')->get();
+
         return view('html.manager.activities.activities', compact('activities'));
     }
 
@@ -57,9 +68,9 @@ class ActivityController extends Controller
 
 
     // عرض نموذج إضافة فعالية (GET)
-    public function addActivity(Request $request)
+    public function addActivity()
     {
-        $managerId = session('manager_id');
+
         return view('html.manager.activities.add_activity');
     }
 
@@ -163,6 +174,7 @@ class ActivityController extends Controller
             $data['image'] = $imagename;
         }
         try {
+
             $activity->update($data);
 
             // تحديث أو حذف السجلات الفرعية
@@ -251,5 +263,192 @@ class ActivityController extends Controller
 
         return redirect()->route('manager.activities.index')
             ->with('success', $activity->is_published ? 'تم إعلان الفعالية' : 'تم إيقاف الإعلان عن الفعالية');
+    }
+
+    //================================================================================
+    // تغيير حالة الفعالية
+    public function toggleStatus($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        // تحديد الحالة التالية في الدورة
+        $currentStatus = $activity->status;
+        $nextStatus = match ($currentStatus) {
+            'draft' => 'active',
+            'active' => 'closed',
+            'closed' => 'draft',
+            default => 'draft'
+        };
+
+        $activity->status = $nextStatus;
+        $activity->save();
+
+        // رسائل النجاح بالعربية
+        $statusMessages = [
+            'draft' => 'مسودة',
+            'active' => 'نشطة',
+            'closed' => 'مغلقة'
+        ];
+
+        return redirect()->route('manager.activities.index')
+            ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$nextStatus]);
+    }
+
+    //================================================================================
+    // نتائج الفعاليات
+
+    // إدارة نتائج الفعالية (عرض وإضافة وتعديل في صفحة واحدة)
+    public function manageActivityResults($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $results = ActivityResult::where('activity_id', $id)->first();
+
+        return view('html.manager.activities.results', compact('activity', 'results'));
+    }
+
+    // عرض نتائج الفعالية
+    public function viewActivityResults($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $results = ActivityResult::where('activity_id', $id)->first();
+
+        return view('html.manager.activities.results', compact('activity', 'results'));
+    }
+
+    // عرض نموذج إضافة نتائج الفعالية
+    public function addActivityResults($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        return view('html.manager.activities.add_results', compact('activity'));
+    }
+
+    // حفظ نتائج الفعالية
+    public function storeActivityResults(Request $request, $id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'total_volunteers' => 'nullable|integer|min:0',
+            'total_hours' => 'nullable|integer|min:0',
+            'attendance_count' => 'nullable|integer|min:0',
+            'goals_achieved' => 'nullable|string',
+            'challenges' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'images' => 'nullable|string',
+            'report_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+        ]);
+
+        try {
+            // رفع ملف التقرير
+            if ($request->hasFile('report_file')) {
+                $fileName = uniqid() . '.' . $request->file('report_file')->getClientOriginalExtension();
+                $request->file('report_file')->move(public_path('assets/files/activity_reports'), $fileName);
+                $data['report_file'] = $fileName;
+            }
+
+            $data['activity_id'] = $id;
+            $data['created_by'] = $managerId;
+
+            ActivityResult::create($data);
+
+            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم إضافة نتائج الفعالية بنجاح');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة نتائج الفعالية: ' . $e->getMessage());
+        }
+    }
+
+    // عرض نموذج تعديل نتائج الفعالية
+    public function editActivityResults($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $results = ActivityResult::where('activity_id', $id)->firstOrFail();
+
+        return view('html.manager.activities.edit_results', compact('activity', 'results'));
+    }
+
+    // تحديث نتائج الفعالية
+    public function updateActivityResults(Request $request, $id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $results = ActivityResult::where('activity_id', $id)->firstOrFail();
+
+        $data = $request->validate([
+            'total_volunteers' => 'nullable|integer|min:0',
+            'total_hours' => 'nullable|integer|min:0',
+            'attendance_count' => 'nullable|integer|min:0',
+            'goals_achieved' => 'nullable|string',
+            'challenges' => 'nullable|string',
+            'notes' => 'nullable|string',
+            'images' => 'nullable|string',
+            'report_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
+        ]);
+
+        try {
+            // رفع ملف التقرير الجديد
+            if ($request->hasFile('report_file')) {
+                // حذف الملف القديم
+                if ($results->report_file) {
+                    $oldPath = public_path('assets/files/activity_reports/' . $results->report_file);
+                    if (file_exists($oldPath)) unlink($oldPath);
+                }
+
+                $fileName = uniqid() . '.' . $request->file('report_file')->getClientOriginalExtension();
+                $request->file('report_file')->move(public_path('assets/files/activity_reports'), $fileName);
+                $data['report_file'] = $fileName;
+            }
+
+            $results->update($data);
+
+            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم تحديث نتائج الفعالية بنجاح');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث نتائج الفعالية: ' . $e->getMessage());
+        }
+    }
+
+    // حذف نتائج الفعالية
+    public function destroyActivityResults($id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $results = ActivityResult::where('activity_id', $id)->firstOrFail();
+
+        // حذف ملف التقرير
+        if ($results->report_file) {
+            $filePath = public_path('assets/files/activity_reports/' . $results->report_file);
+            if (file_exists($filePath)) unlink($filePath);
+        }
+
+        $results->delete();
+
+        return redirect()->route('manager.activities.index')->with('success', 'تم حذف نتائج الفعالية بنجاح');
     }
 }

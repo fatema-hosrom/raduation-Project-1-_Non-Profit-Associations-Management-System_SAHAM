@@ -29,7 +29,19 @@
             </a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="<?php echo e(route('manager.logout')); ?>">
+            <a class="nav-link <?php echo request()->is('manager/activity-volunteers*') ? 'active' : ''; ?>" href="<?php echo e(route('manager.activity_volunteers.index')); ?>">
+                <i class="fas fa-user-plus"></i>
+                إدارة المتطوعين بالفعالية
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link <?php echo request()->is('manager/volunteers*') ? 'active' : ''; ?>" href="<?php echo e(route('manager.volunteers.index')); ?>">
+                <i class="fas fa-users"></i>
+                المتطوعين
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="<?php echo e(route('auth.logout')); ?>">
                 <i class="fas fa-sign-out-alt"></i>
                 تسجيل الخروج
             </a>
