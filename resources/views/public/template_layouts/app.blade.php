@@ -46,11 +46,28 @@
                 </div>
 
                 <!-- القائمة اليسرى -->
-                <nav class="hidden md:flex space-x-6 rtl:space-x-reverse">
+                <nav class="hidden md:flex space-x-6 rtl:space-x-reverse items-center">
                     <a href="{{ route('public.activities.index') }}"
                         class="font-semibold hover:text-yellow-300 transition">فعاليات ساهم</a>
-                    <a href="{{ route('public.volunteer.register') }}"
-                        class="font-semibold hover:text-yellow-300 transition">كن متطوع</a>
+
+                    @if (session('volunteer_id'))
+                        <div class="flex items-center gap-4">
+                            <span class="font-semibold">{{ session('volunteer_name') }}</span>
+                            <a href="{{ route('volunteer.dashboard') }}"
+                                class="bg-yellow-400 text-gray-800 px-3 py-1 rounded font-semibold hover:bg-yellow-300 transition">
+                                لوحتي
+                            </a>
+                            <a href="{{ route('volunteer.logout') }}"
+                                class="text-red-400 hover:text-red-300 transition">تسجيل خروج</a>
+                        </div>
+                    @else
+                        <button onclick="openLoginModal()"
+                            class="bg-yellow-400 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-yellow-300 transition">
+                            تسجيل الدخول
+                        </button>
+                        <a href="{{ route('public.volunteer.register') }}"
+                            class="font-semibold hover:text-yellow-300 transition">كن متطوع</a>
+                    @endif
                 </nav>
 
                 <!-- زر الموبايل -->
@@ -69,8 +86,22 @@
                     class="block hover:text-yellow-300 transition">فعاليات الجمعيات</a>
                 <a href="{{ route('public.activities.index') }}" class="block hover:text-yellow-300 transition">فعاليات
                     ساهم</a>
-                <a href="{{ route('public.volunteer.register') }}" class="block hover:text-yellow-300 transition">كن
-                    متطوع</a>
+
+                @if (session('volunteer_id'))
+                    <a href="{{ route('volunteer.dashboard') }}"
+                        class="block bg-yellow-400 text-gray-800 px-3 py-2 rounded font-semibold hover:bg-yellow-300 transition">
+                        لوحتي
+                    </a>
+                    <a href="{{ route('volunteer.logout') }}"
+                        class="block text-red-400 hover:text-red-300 transition">تسجيل خروج</a>
+                @else
+                    <button onclick="openLoginModal()"
+                        class="block w-full bg-yellow-400 text-gray-800 px-3 py-2 rounded font-semibold hover:bg-yellow-300 transition">
+                        تسجيل الدخول
+                    </button>
+                    <a href="{{ route('public.volunteer.register') }}" class="block hover:text-yellow-300 transition">كن
+                        متطوع</a>
+                @endif
             </div>
         </div>
     </header>
@@ -133,6 +164,215 @@
             </button>
         </div>
     @endif
+
+    <!-- Modal Login للمتطوعين -->
+    <div id="loginModal" class="login-modal" style="display: none;">
+        <div class="login-modal-backdrop"></div>
+        <div class="login-modal-box">
+            <div class="login-modal-header">
+                <h2>تسجيل دخول المتطوع</h2>
+                <button type="button" onclick="closeLoginModal()" class="close-btn">&times;</button>
+            </div>
+
+            <form method="POST" action="{{ route('volunteer.login.post') }}" class="login-form">
+                @csrf
+
+                @if ($errors->any())
+                    <div class="alert alert-danger mb-4">
+                        @foreach ($errors->all() as $error)
+                            <div>{{ $error }}</div>
+                        @endforeach
+                    </div>
+                @endif
+
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" name="email" class="form-control" required
+                        value="{{ old('email') }}">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" name="password" class="form-control" required>
+                </div>
+
+                <button type="submit" class="btn-login-submit">دخول</button>
+            </form>
+
+            <div class="login-footer">
+                <p>ليس لديك حساب؟
+                    <a href="{{ route('public.volunteer.register') }}" onclick="closeLoginModal()">سجل كمتطوع</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-modal-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        .login-modal-box {
+            position: relative;
+            background-color: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+        }
+
+        .login-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #2c3e50;
+            padding-bottom: 1rem;
+        }
+
+        .login-modal-header h2 {
+            margin: 0;
+            color: #2c3e50;
+            font-size: 1.5rem;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #6c757d;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+
+        .close-btn:hover {
+            color: #2c3e50;
+        }
+
+        .login-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #ffc107;
+            box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+        }
+
+        .btn-login-submit {
+            width: 100%;
+            padding: 0.75rem 1.5rem;
+            background-color: #ffc107;
+            color: #2c3e50;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-login-submit:hover {
+            background-color: #ffb700;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+        }
+
+        .login-footer {
+            text-align: center;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .login-footer p {
+            margin: 0;
+            color: #6c757d;
+        }
+
+        .login-footer a {
+            color: #ffc107;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            padding: 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+
+    <script>
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        // إغلاق عند الضغط على الخلفية
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('login-modal-backdrop')) {
+                closeLoginModal();
+            }
+        });
+
+        // إغلاق بـ Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeLoginModal();
+            }
+        });
+    </script>
 
     <!-- Main Content -->
     <main class="container mx-auto my-2 px-4">

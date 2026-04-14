@@ -124,9 +124,9 @@ class ActivityController extends Controller
                 ]);
             }
 
-            //             return redirect()->route('manager.activities.index')->with('success', 'تم إضافة الفعالية بنجاح');
+            return redirect()->route('manager.activities.index')->with('success', 'تم إضافة الفعالية بنجاح');
         } catch (\Exception $e) {
-            //             return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة الفعالية: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -219,9 +219,9 @@ class ActivityController extends Controller
                     ]
                 );
             }
-            //             return redirect()->route('manager.activities.index')->with('success', 'تم تحديث الفعالية بنجاح');
+            return redirect()->route('manager.activities.index')->with('success', 'تم تحديث الفعالية بنجاح');
         } catch (\Exception $e) {
-            //             return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث الفعالية: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -239,12 +239,12 @@ class ActivityController extends Controller
         if ($activity->image) {
             $imagePath = public_path('assets/images/activities/' . $activity->image);
             if (file_exists($imagePath)) {
-                //                 unlink($imagePath); // حذف الملف من النظام
+                unlink($imagePath); // حذف الملف من النظام
             }
         }
         $activity->delete();
 
-        //         return redirect()->route('manager.activities.index')->with('success', 'تم حذف الفعالية');
+        return redirect()->route('manager.activities.index')->with('success', 'تم حذف الفعالية');
     }
 
 
@@ -258,8 +258,8 @@ class ActivityController extends Controller
         $activity->is_published = $activity->is_published ? false : true;
         $activity->save();
 
-        return redirect()->route('manager.activities.index');
-        //             ->with('success', $activity->is_published ? 'تم إعلان الفعالية' : 'تم إيقاف الإعلان عن الفعالية');
+        return redirect()->route('manager.activities.index')
+            ->with('success', $activity->is_published ? 'تم إعلان الفعالية' : 'تم إيقاف الإعلان عن الفعالية');
     }
 
     // تغيير حالة الفعالية
@@ -284,13 +284,13 @@ class ActivityController extends Controller
 
         // رسائل النجاح بالعربية
         $statusMessages = [
-            //             'draft' => 'مسودة',
-            //             'active' => 'نشطة',
-            //             'closed' => 'مغلقة'
+            'draft' => 'مسودة',
+            'active' => 'نشطة',
+            'closed' => 'مغلقة'
         ];
 
-        return redirect()->route('manager.activities.index');
-        //             ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$nextStatus]);
+        return redirect()->route('manager.activities.index')
+            ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$nextStatus]);
     }
 
     // تغيير حالة الفعالية
@@ -311,13 +311,13 @@ class ActivityController extends Controller
 
         // رسائل النجاح بالعربية
         $statusMessages = [
-            //             'draft' => 'مسودة',
-            //             'active' => 'نشطة',
-            //             'closed' => 'مغلقة'
+            'draft' => 'مسودة',
+            'active' => 'نشطة',
+            'closed' => 'مغلقة'
         ];
 
-        return redirect()->route('manager.activities.index');
-        //             ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$newStatus]);
+        return redirect()->route('manager.activities.index')
+            ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$newStatus]);
     }
 
     // نتائج الفعاليات
@@ -403,9 +403,9 @@ class ActivityController extends Controller
 
             ActivityResult::create($data);
 
-            //             return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم إضافة نتائج الفعالية بنجاح');
+            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم إضافة نتائج الفعالية بنجاح');
         } catch (\Exception $e) {
-            //             return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة نتائج الفعالية: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة نتائج الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -482,9 +482,9 @@ class ActivityController extends Controller
 
             $results->update($data);
 
-            //             return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم تحديث نتائج الفعالية بنجاح');
+            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم تحديث نتائج الفعالية بنجاح');
         } catch (\Exception $e) {
-            //             return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث نتائج الفعالية: ' . $e->getMessage());
+            return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث نتائج الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -517,6 +517,6 @@ class ActivityController extends Controller
 
         $results->delete();
 
-        //         return redirect()->route('manager.activities.index')->with('success', 'تم حذف نتائج الفعالية بنجاح');
+        return redirect()->route('manager.activities.index')->with('success', 'تم حذف نتائج الفعالية بنجاح');
     }
 }

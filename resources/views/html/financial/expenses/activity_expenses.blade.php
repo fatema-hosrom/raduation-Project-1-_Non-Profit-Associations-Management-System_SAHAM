@@ -55,6 +55,7 @@
                         <th class="px-4 py-3 text-center w-24">رقم الإيصال</th>
                         <th class="px-4 py-3 text-center w-20">المبلغ</th>
                         <th class="px-4 py-3 text-center w-28">التاريخ</th>
+                        <th class="px-4 py-3 text-center w-32">الملف</th>
                         <th class="px-4 py-3 text-center w-36">إجراءات</th>
                     </tr>
                 </thead>
@@ -67,6 +68,33 @@
                             <td class="px-4 py-3 text-center font-semibold text-green-700">
                                 {{ number_format($exp->amount, 2) }}</td>
                             <td class="px-4 py-3 text-center text-gray-600">{{ $exp->expense_date }}</td>
+                            <td class="px-4 py-3 text-center">
+                                @if ($exp->receipt)
+                                    <div class="flex justify-center gap-2">
+                                        <a href="{{ asset($exp->receipt) }}" download
+                                            class="text-green-600 hover:text-green-800 flex items-center gap-1"
+                                            title="تحميل الملف">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4">
+                                                </path>
+                                            </svg>
+                                        </a>
+                                        <button type="button"
+                                            onclick="openDeleteConfirm('{{ route('financial.expenses.activity.delete-receipt', [$activity->id, $exp->id]) }}', '{{ $exp->description }}')"
+                                            class="text-red-600 hover:text-red-800 flex items-center gap-1"
+                                            title="حذف الملف">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                @else
+                                    <span class="text-gray-400 text-sm">لا يوجد ملف</span>
+                                @endif
+                            </td>
                             <td class="px-4 py-3 flex justify-center gap-3">
                                 {{-- تعديل --}}
                                 <a href="{{ route('financial.expenses.activity.edit', [$activity->id, $exp->id]) }}"
@@ -99,4 +127,150 @@
         </div>
 
     </div>
+
+    {{-- Modal for Deletion Confirmation --}}
+    <div id="deleteConfirmModal" class="delete-confirm-modal" aria-hidden="true" style="display:none;">
+        <div class="delete-confirm-backdrop"></div>
+        <div class="delete-confirm-box" role="dialog" aria-modal="true">
+            <h3>تأكيد حذف الملف</h3>
+            <p id="delete-confirm-message">هل تريد حذف الملف من "<span id="delete-item-name"></span>"؟</p>
+            <div class="delete-confirm-actions">
+                <button type="button" id="delete-cancel" class="btn btn-secondary">إلغاء</button>
+                <form id="delete-receipt-form" method="POST" style="display: none;">
+                    @csrf
+                    @method('DELETE')
+                </form>
+                <button type="button" id="delete-confirm" class="btn btn-danger">تأكيد الحذف</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .delete-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .delete-confirm-modal.show {
+            display: flex !important;
+        }
+
+        .delete-confirm-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .delete-confirm-box {
+            position: relative;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            max-width: 28rem;
+            width: 90%;
+        }
+
+        .delete-confirm-box h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #dc2626;
+        }
+
+        .delete-confirm-box p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .delete-confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .btn-danger {
+            background-color: #dc2626;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #b91c1c;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script>
+        let currentDeleteUrl = null;
+        const modal = document.getElementById('deleteConfirmModal');
+        const messageEl = document.getElementById('delete-confirm-message');
+        const itemNameEl = document.getElementById('delete-item-name');
+        const btnConfirm = document.getElementById('delete-confirm');
+        const btnCancel = document.getElementById('delete-cancel');
+        const deleteForm = document.getElementById('delete-receipt-form');
+
+        function openDeleteConfirm(deleteUrl, itemName) {
+            currentDeleteUrl = deleteUrl;
+            itemNameEl.textContent = itemName;
+            messageEl.innerHTML =
+                `هل أنت متأكد أنك تريد حذف الملف من "<strong>${itemName}</strong>"؟ لا يمكن التراجع عن هذا الإجراء.`;
+            modal.classList.add('show');
+        }
+
+        function closeDeleteConfirm() {
+            currentDeleteUrl = null;
+            modal.classList.remove('show');
+        }
+
+        btnCancel.addEventListener('click', function() {
+            closeDeleteConfirm();
+        });
+
+        btnConfirm.addEventListener('click', function() {
+            if (currentDeleteUrl) {
+                deleteForm.action = currentDeleteUrl;
+                deleteForm.submit();
+            }
+        });
+
+        // إغلاق Modal عند الضغط على الخلفية
+        modal.addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('delete-confirm-backdrop')) {
+                closeDeleteConfirm();
+            }
+        });
+
+        // إغلاق باستخدام مفتاح Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && modal.classList.contains('show')) {
+                closeDeleteConfirm();
+            }
+        });
+    </script>
 @endsection

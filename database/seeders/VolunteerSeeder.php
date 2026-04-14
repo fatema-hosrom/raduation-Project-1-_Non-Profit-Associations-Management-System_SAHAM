@@ -5,16 +5,23 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Volunteer;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\DB;
 
 class VolunteerSeeder extends Seeder
 {
     public function run()
     {
+        // تنظيف البيانات القديمة بدون حذف الجدول
+        // استخدم delete بدلاً من truncate لتجنب Foreign Key Issues
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        Volunteer::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+
         $volunteers = [
             [
                 'name' => 'أحمد العلي',
-                'email' => 'ahmad1@example.com',
-                'password' => Hash::make('password123'),
+                'email' => 'ahmad@test.com',  // بريد واضح للاختبار
+                'password' => Hash::make('password123'),  // كلمة محددة
                 'phone' => '+963944111111',
                 'gender' => 'male',
                 'age' => 25,
@@ -25,13 +32,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مسائي',
                 'preferred_roles' => 'تنظيم',
-                'languages' => 'العربية,الإنجليزية',
+                'languages' => 'Arabic,English',
                 'emergency_contact' => '+963944222222',
-                'status' => 'pending',
+                'status' => 'active',  // متطوع مقبول - يمكنه الدخول
             ],
             [
                 'name' => 'محمد الخطيب',
-                'email' => 'moh1@example.com',
+                'email' => 'mohammad@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111112',
                 'gender' => 'male',
@@ -43,13 +50,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'صباحي',
                 'preferred_roles' => 'إشراف',
-                'languages' => 'العربية,الإنجليزية',
+                'languages' => 'Arabic,English',
                 'emergency_contact' => '+963944222223',
-                'status' => 'pending',
+                'status' => 'active',  // متطوع مقبول
             ],
             [
                 'name' => 'سارة يوسف',
-                'email' => 'sara1@example.com',
+                'email' => 'sarah@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111113',
                 'gender' => 'female',
@@ -61,13 +68,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مرن',
                 'preferred_roles' => 'تصميم',
-                'languages' => 'العربية,الفرنسية',
+                'languages' => 'Arabic,French',
                 'emergency_contact' => '+963944222224',
-                'status' => 'pending',
+                'status' => 'pending',  // قيد المراجعة
             ],
             [
                 'name' => 'ليان الأحمد',
-                'email' => 'lian1@example.com',
+                'email' => 'layan@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111114',
                 'gender' => 'female',
@@ -79,13 +86,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مسائي',
                 'preferred_roles' => 'إعلام',
-                'languages' => 'العربية,الإنجليزية',
+                'languages' => 'Arabic,English',
                 'emergency_contact' => '+963944222225',
                 'status' => 'pending',
             ],
             [
                 'name' => 'رامي درويش',
-                'email' => 'rami1@example.com',
+                'email' => 'rami@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111115',
                 'gender' => 'male',
@@ -97,13 +104,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'صباحي',
                 'preferred_roles' => 'مالية',
-                'languages' => 'العربية',
+                'languages' => 'Arabic',
                 'emergency_contact' => '+963944222226',
-                'status' => 'pending',
+                'status' => 'active',
             ],
             [
                 'name' => 'نور الحسين',
-                'email' => 'noor1@example.com',
+                'email' => 'noor@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111116',
                 'gender' => 'female',
@@ -115,13 +122,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مرن',
                 'preferred_roles' => 'ميداني',
-                'languages' => 'العربية,الإنجليزية',
+                'languages' => 'Arabic,English',
                 'emergency_contact' => '+963944222227',
-                'status' => 'pending',
+                'status' => 'active',
             ],
             [
                 'name' => 'خالد العيسى',
-                'email' => 'khaled1@example.com',
+                'email' => 'khaled@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111117',
                 'gender' => 'male',
@@ -133,13 +140,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مسائي',
                 'preferred_roles' => 'تنظيم',
-                'languages' => 'العربية',
+                'languages' => 'Arabic',
                 'emergency_contact' => '+963944222228',
-                'status' => 'pending',
+                'status' => 'active',
             ],
             [
                 'name' => 'ميساء ناصر',
-                'email' => 'maysa1@example.com',
+                'email' => 'maysa@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111118',
                 'gender' => 'female',
@@ -151,13 +158,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'صباحي',
                 'preferred_roles' => 'تعليم',
-                'languages' => 'العربية',
+                'languages' => 'Arabic',
                 'emergency_contact' => '+963944222229',
                 'status' => 'pending',
             ],
             [
                 'name' => 'ياسر محمود',
-                'email' => 'yaser1@example.com',
+                'email' => 'yasser@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111119',
                 'gender' => 'male',
@@ -169,13 +176,13 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مرن',
                 'preferred_roles' => 'طوارئ',
-                'languages' => 'العربية,الإنجليزية',
+                'languages' => 'Arabic,English',
                 'emergency_contact' => '+963944222230',
-                'status' => 'pending',
+                'status' => 'active',
             ],
             [
                 'name' => 'هبة سليمان',
-                'email' => 'hiba1@example.com',
+                'email' => 'hiba@test.com',
                 'password' => Hash::make('password123'),
                 'phone' => '+963944111120',
                 'gender' => 'female',
@@ -187,14 +194,17 @@ class VolunteerSeeder extends Seeder
                 'education_level' => 'جامعي',
                 'availability' => 'مسائي',
                 'preferred_roles' => 'تنظيم',
-                'languages' => 'العربية',
+                'languages' => 'Arabic',
                 'emergency_contact' => '+963944222231',
-                'status' => 'pending',
+                'status' => 'inactive',  // حساب معطل
             ],
         ];
 
         foreach ($volunteers as $volunteer) {
             Volunteer::create($volunteer);
         }
+
+        echo "✅ تم إنشاء " . count($volunteers) . " متطوع\n";
+        echo "✅ جاهزين للاختبار!\n";
     }
 }

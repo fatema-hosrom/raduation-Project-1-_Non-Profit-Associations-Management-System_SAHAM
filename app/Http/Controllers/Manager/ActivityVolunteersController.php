@@ -188,6 +188,14 @@ class ActivityVolunteersController extends Controller
             'removal_reason' => $request->removal_reason,
         ]);
 
+        // تقليل عدد المتطوعين للفعالية إذا كان مقبول
+        if ($assignment->status === 'approved') {
+            $requirements = $activity->volunteerRequirements()->first();
+            if ($requirements && $requirements->volunteers_count > 0) {
+                $requirements->decrement('volunteers_count');
+            }
+        }
+
         return response()->json(['success' => true, 'message' => 'تم حذف المتطوع من الفعالية']);
     }
 

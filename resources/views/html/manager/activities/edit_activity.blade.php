@@ -121,10 +121,10 @@
                                     <div class="col-12 col-md-3">
                                         <div class="input-group-label"><i class="fas fa-flag"></i><label>طريقة
                                                 التعيين</label></div><select name="volunteer_mode" class="form-control">
-                                            <option value="manual"
+                                            <option value="auto"
                                                 {{ (optional($activity->volunteerRequirements)->volunteer_mode ?? '') == 'manual' ? 'selected' : '' }}>
                                                 الأسبقية للحضور</option>
-                                            <option value="auto"
+                                            <option value="manual"
                                                 {{ (optional($activity->volunteerRequirements)->volunteer_mode ?? '') == 'auto' ? 'selected' : '' }}>
                                                 اختيار المتطوعين</option>
                                         </select>

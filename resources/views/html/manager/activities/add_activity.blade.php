@@ -123,8 +123,8 @@
                                             <div class="input-group-label"><i class="fas fa-flag"></i><label>طريقة
                                                     التعيين</label></div><select name="volunteer_mode"
                                                 class="form-control">
-                                                <option value="manual">الأسبقية للحضور</option>
-                                                <option value="auto">اختيار المتطوعين</option>
+                                                <option value="auto">الأسبقية للحضور</option>
+                                                <option value="manual">اختيار المتطوعين</option>
                                             </select>
                                         </div>
                                     </div>

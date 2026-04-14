@@ -88,7 +88,10 @@ class FinancialExpenseController extends Controller
 
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+            $file = $request->file('receipt');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/files/receipts'), $filename);
+            $receiptPath = 'assets/files/receipts/' . $filename;
         }
 
         Expense::create([
@@ -142,7 +145,10 @@ class FinancialExpenseController extends Controller
         ];
 
         if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+            $file = $request->file('receipt');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('assets/files/receipts'), $filename);
+            $receiptPath = 'assets/files/receipts/' . $filename;
             $updateData['receipt'] = $receiptPath;
         }
 
@@ -150,6 +156,28 @@ class FinancialExpenseController extends Controller
 
         return redirect()->route('financial.expenses.activity.show', $activityId)
             ->with('success', 'تم تحديث المصروف بنجاح');
+    }
+
+    // حذف الملف الخاص بالمصروف
+    public function deleteReceipt($activityId, $expenseId, Request $request)
+    {
+        $activity = OrganizationActivity::where('id', $activityId)
+            ->firstOrFail();
+
+        $expense = Expense::where('id', $expenseId)
+            ->where('activity_id', $activityId)
+            ->firstOrFail();
+
+        // حذف الملف من النظام
+        if ($expense->receipt && file_exists(public_path($expense->receipt))) {
+            unlink(public_path($expense->receipt));
+        }
+
+        // تحديث السجل بحذف مسار الملف
+        $expense->update(['receipt' => null]);
+
+        return redirect()->route('financial.expenses.activity.show', $activityId)
+            ->with('success', 'تم حذف الملف بنجاح');
     }
 
     // حذف المصروف (معلق)

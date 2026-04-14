@@ -208,9 +208,10 @@
                     </div>
 
                     <div class="text-center">
-                        <button type="submit" class="btn-submit mx-auto">
+                        <button type="button" onclick="openEditConfirm()" class="btn-submit mx-auto" id="submit-btn">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
                             </svg>
                             تعديل
                         </button>
@@ -221,7 +222,136 @@
         </form>
     </div>
 
+    {{-- Modal for Edit Confirmation --}}
+    <div id="editConfirmModal" class="edit-confirm-modal" aria-hidden="true">
+        <div class="edit-confirm-backdrop"></div>
+        <div class="edit-confirm-box" role="dialog" aria-modal="true">
+            <h3>تأكيد التعديل</h3>
+            <p id="edit-confirm-message">هل أنت متأكد أنك تريد تعديل هذا المصروف؟</p>
+            <div class="edit-confirm-actions">
+                <button type="button" id="edit-cancel" class="btn btn-secondary">إلغاء</button>
+                <button type="button" id="edit-confirm" class="btn btn-primary">تأكيد التعديل</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .edit-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .edit-confirm-modal.show {
+            display: flex !important;
+        }
+
+        .edit-confirm-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .edit-confirm-box {
+            position: relative;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            max-width: 28rem;
+            width: 90%;
+        }
+
+        .edit-confirm-box h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1e3a8a;
+        }
+
+        .edit-confirm-box p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .edit-confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+    </style>
+
     <script>
+        const editForm = document.querySelector('form');
+        const editModal = document.getElementById('editConfirmModal');
+        const editBtnCancel = document.getElementById('edit-cancel');
+        const editBtnConfirm = document.getElementById('edit-confirm');
+
+        function openEditConfirm() {
+            editModal.classList.add('show');
+        }
+
+        function closeEditConfirm() {
+            editModal.classList.remove('show');
+        }
+
+        editBtnCancel.addEventListener('click', function() {
+            closeEditConfirm();
+        });
+
+        editBtnConfirm.addEventListener('click', function() {
+            editForm.submit();
+        });
+
+        // إغلاق Modal عند الضغط على الخلفية
+        editModal.addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('edit-confirm-backdrop')) {
+                closeEditConfirm();
+            }
+        });
+
+        // إغلاق باستخدام مفتاح Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && editModal.classList.contains('show')) {
+                closeEditConfirm();
+            }
+        });
+
         // فتح حقل الملف عند النقر على الـ div
         document.querySelector('.file-upload').addEventListener('click', function(e) {
             if (e.target.tagName !== 'INPUT') {

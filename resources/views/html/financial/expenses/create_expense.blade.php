@@ -242,7 +242,7 @@
                 </div>
 
                 <div class="text-center">
-                    <button type="submit" class="btn-submit mx-auto">
+                    <button type="button" onclick="openAddConfirm()" class="btn-submit mx-auto" id="submit-btn">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                         </svg>
@@ -255,7 +255,137 @@
         </form>
     </div>
 
+    {{-- Modal for Add Confirmation --}}
+    <div id="addConfirmModal" class="add-confirm-modal" aria-hidden="true">
+        <div class="add-confirm-backdrop"></div>
+        <div class="add-confirm-box" role="dialog" aria-modal="true">
+            <h3>تأكيد الإضافة</h3>
+            <p id="add-confirm-message">هل أنت متأكد أنك تريد إضافة هذا المصروف؟</p>
+            <div class="add-confirm-actions">
+                <button type="button" id="add-cancel" class="btn btn-secondary">إلغاء</button>
+                <button type="button" id="add-confirm" class="btn btn-primary">تأكيد الإضافة</button>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .add-confirm-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 50;
+            align-items: center;
+            justify-content: center;
+            display: none;
+        }
+
+        .add-confirm-modal.show {
+            display: flex !important;
+        }
+
+        .add-confirm-backdrop {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .add-confirm-box {
+            position: relative;
+            background-color: white;
+            border-radius: 0.5rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            max-width: 28rem;
+            width: 90%;
+        }
+
+        .add-confirm-box h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #059669;
+        }
+
+        .add-confirm-box p {
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+        }
+
+        .add-confirm-actions {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background-color: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d1d5db;
+        }
+
+        .btn-primary {
+            background-color: #059669;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #047857;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+    </style>
+
     <script>
+        const addForm = document.querySelector('form');
+        const addModal = document.getElementById('addConfirmModal');
+        const addBtnCancel = document.getElementById('add-cancel');
+        const addBtnConfirm = document.getElementById('add-confirm');
+
+        function openAddConfirm() {
+            addModal.classList.add('show');
+        }
+
+        function closeAddConfirm() {
+            addModal.classList.remove('show');
+        }
+
+        addBtnCancel.addEventListener('click', function() {
+            closeAddConfirm();
+        });
+
+        addBtnConfirm.addEventListener('click', function() {
+            addForm.submit();
+        });
+
+        // إغلاق Modal عند الضغط على الخلفية
+        addModal.addEventListener('click', function(e) {
+            if (e.target === this || e.target.classList.contains('add-confirm-backdrop')) {
+                closeAddConfirm();
+            }
+        });
+
+        // إغلاق باستخدام مفتاح Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && addModal.classList.contains('show')) {
+                closeAddConfirm();
+            }
+        });
+
         // فتح حقل الملف عند النقر على الـ div
         document.querySelector('.file-upload').addEventListener('click', function(e) {
             if (e.target.tagName !== 'INPUT') {

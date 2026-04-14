@@ -28,4 +28,12 @@ PROJECT_REVIEW.md
 README_ROOT.md
 README.md
 /docs
+/docs2
 /tests
+/tests/Unit
+/tests/Feature
+/tests/Browser
+/tests/Api
+/tests/Console
+/tests/Unit
+

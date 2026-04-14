@@ -30,6 +30,7 @@ Route::middleware([CheckFinancialManagerAuth::class])->prefix('financial')->name
     Route::post('/expenses/activity/{id}', [App\Http\Controllers\Financial\FinancialExpenseController::class, 'storeExpense'])->name('expenses.activity.store');
     Route::get('/expenses/activity/{aid}/edit/{eid}', [App\Http\Controllers\Financial\FinancialExpenseController::class, 'editExpense'])->name('expenses.activity.edit');
     Route::put('/expenses/activity/{aid}/edit/{eid}', [App\Http\Controllers\Financial\FinancialExpenseController::class, 'updateExpense'])->name('expenses.activity.update');
+    Route::delete('/expenses/activity/{aid}/{eid}/receipt', [App\Http\Controllers\Financial\FinancialExpenseController::class, 'deleteReceipt'])->name('expenses.activity.delete-receipt');
     // delete route commented
     // Route::delete('/expenses/activity/{aid}/{eid}', [App\Http\Controllers\Financial\FinancialExpenseController::class, 'destroyExpense'])->name('expenses.activity.destroy');
 

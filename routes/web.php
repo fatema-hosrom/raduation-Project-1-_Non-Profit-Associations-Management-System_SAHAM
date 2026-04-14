@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\UnifiedAuthController;
 require __DIR__ . '/manager/manager_web.php';
 require __DIR__ . '/supervisor/supervisor_web.php';
 require __DIR__ . '/financial/financial_web.php';
+require __DIR__ . '/volunteer/volunteer_web.php';
 
 /*|--------------------------------------------------------------------------
 | Public Routes
