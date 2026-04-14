@@ -124,14 +124,13 @@ class ActivityController extends Controller
                 ]);
             }
 
-            return redirect()->route('manager.activities.index')->with('success', 'تم إضافة الفعالية بنجاح');
+            //             return redirect()->route('manager.activities.index')->with('success', 'تم إضافة الفعالية بنجاح');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة الفعالية: ' . $e->getMessage());
+            //             return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة الفعالية: ' . $e->getMessage());
         }
     }
 
 
-    //================================================================================
 
     // تعديل فعالية موجودة
     // عرض نموذج تعديل فعالية (GET)
@@ -220,14 +219,13 @@ class ActivityController extends Controller
                     ]
                 );
             }
-            return redirect()->route('manager.activities.index')->with('success', 'تم تحديث الفعالية بنجاح');
+            //             return redirect()->route('manager.activities.index')->with('success', 'تم تحديث الفعالية بنجاح');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث الفعالية: ' . $e->getMessage());
+            //             return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث الفعالية: ' . $e->getMessage());
         }
     }
 
 
-    //============================================================================
 
     // حذف فعالية (DELETE)
     public function destroyActivity($id)
@@ -241,17 +239,16 @@ class ActivityController extends Controller
         if ($activity->image) {
             $imagePath = public_path('assets/images/activities/' . $activity->image);
             if (file_exists($imagePath)) {
-                unlink($imagePath); // حذف الملف من النظام
+                //                 unlink($imagePath); // حذف الملف من النظام
             }
         }
         $activity->delete();
 
-        return redirect()->route('manager.activities.index')->with('success', 'تم حذف الفعالية');
+        //         return redirect()->route('manager.activities.index')->with('success', 'تم حذف الفعالية');
     }
 
 
 
-    //================================================================================
     //  تبديل حالة النشر للفعالية
     public function togglePublish($id)
     {
@@ -261,11 +258,10 @@ class ActivityController extends Controller
         $activity->is_published = $activity->is_published ? false : true;
         $activity->save();
 
-        return redirect()->route('manager.activities.index')
-            ->with('success', $activity->is_published ? 'تم إعلان الفعالية' : 'تم إيقاف الإعلان عن الفعالية');
+        return redirect()->route('manager.activities.index');
+        //             ->with('success', $activity->is_published ? 'تم إعلان الفعالية' : 'تم إيقاف الإعلان عن الفعالية');
     }
 
-    //================================================================================
     // تغيير حالة الفعالية
     public function toggleStatus($id)
     {
@@ -288,16 +284,42 @@ class ActivityController extends Controller
 
         // رسائل النجاح بالعربية
         $statusMessages = [
-            'draft' => 'مسودة',
-            'active' => 'نشطة',
-            'closed' => 'مغلقة'
+            //             'draft' => 'مسودة',
+            //             'active' => 'نشطة',
+            //             'closed' => 'مغلقة'
         ];
 
-        return redirect()->route('manager.activities.index')
-            ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$nextStatus]);
+        return redirect()->route('manager.activities.index');
+        //             ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$nextStatus]);
     }
 
-    //================================================================================
+    // تغيير حالة الفعالية
+    public function changeStatus(Request $request, $id)
+    {
+        $managerId = session('manager_id');
+        $activity = OrganizationActivity::where('id', $id)
+            ->where('manager_id', $managerId)
+            ->firstOrFail();
+
+        $request->validate([
+            'status' => 'required|in:draft,active,closed',
+        ]);
+
+        $newStatus = $request->status;
+        $activity->status = $newStatus;
+        $activity->save();
+
+        // رسائل النجاح بالعربية
+        $statusMessages = [
+            //             'draft' => 'مسودة',
+            //             'active' => 'نشطة',
+            //             'closed' => 'مغلقة'
+        ];
+
+        return redirect()->route('manager.activities.index');
+        //             ->with('success', 'تم تغيير حالة الفعالية إلى: ' . $statusMessages[$newStatus]);
+    }
+
     // نتائج الفعاليات
 
     // إدارة نتائج الفعالية (عرض وإضافة وتعديل في صفحة واحدة)
@@ -352,11 +374,23 @@ class ActivityController extends Controller
             'goals_achieved' => 'nullable|string',
             'challenges' => 'nullable|string',
             'notes' => 'nullable|string',
-            'images' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,mov|max:10240',
             'report_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
         try {
+            // رفع ملفات الصور والفيديوهات
+            $uploadedFiles = [];
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $file) {
+                    $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('assets/files/activity_results'), $fileName);
+                    $uploadedFiles[] = $fileName;
+                }
+            }
+            $data['images'] = json_encode($uploadedFiles);
+
             // رفع ملف التقرير
             if ($request->hasFile('report_file')) {
                 $fileName = uniqid() . '.' . $request->file('report_file')->getClientOriginalExtension();
@@ -369,9 +403,9 @@ class ActivityController extends Controller
 
             ActivityResult::create($data);
 
-            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم إضافة نتائج الفعالية بنجاح');
+            //             return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم إضافة نتائج الفعالية بنجاح');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة نتائج الفعالية: ' . $e->getMessage());
+            //             return back()->withInput()->with('error', 'حدث خطأ أثناء إضافة نتائج الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -405,11 +439,34 @@ class ActivityController extends Controller
             'goals_achieved' => 'nullable|string',
             'challenges' => 'nullable|string',
             'notes' => 'nullable|string',
-            'images' => 'nullable|string',
+            'images' => 'nullable|array',
+            'images.*' => 'file|mimes:jpeg,png,jpg,gif,mp4,avi,mov|max:10240',
             'report_file' => 'nullable|file|mimes:pdf,doc,docx|max:10240',
         ]);
 
         try {
+            // رفع ملفات الصور والفيديوهات الجديدة
+            if ($request->hasFile('images')) {
+                // حذف الملفات القديمة
+                if ($results->images) {
+                    $oldFiles = json_decode($results->images, true);
+                    if ($oldFiles) {
+                        foreach ($oldFiles as $oldFile) {
+                            $oldPath = public_path('assets/files/activity_results/' . $oldFile);
+                            if (file_exists($oldPath)) unlink($oldPath);
+                        }
+                    }
+                }
+
+                $uploadedFiles = [];
+                foreach ($request->file('images') as $file) {
+                    $fileName = uniqid() . '.' . $file->getClientOriginalExtension();
+                    $file->move(public_path('assets/files/activity_results'), $fileName);
+                    $uploadedFiles[] = $fileName;
+                }
+                $data['images'] = json_encode($uploadedFiles);
+            }
+
             // رفع ملف التقرير الجديد
             if ($request->hasFile('report_file')) {
                 // حذف الملف القديم
@@ -425,9 +482,9 @@ class ActivityController extends Controller
 
             $results->update($data);
 
-            return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم تحديث نتائج الفعالية بنجاح');
+            //             return redirect()->route('manager.activities.results.view', $id)->with('success', 'تم تحديث نتائج الفعالية بنجاح');
         } catch (\Exception $e) {
-            return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث نتائج الفعالية: ' . $e->getMessage());
+            //             return back()->withInput()->with('error', 'حدث خطأ أثناء تحديث نتائج الفعالية: ' . $e->getMessage());
         }
     }
 
@@ -441,6 +498,17 @@ class ActivityController extends Controller
 
         $results = ActivityResult::where('activity_id', $id)->firstOrFail();
 
+        // حذف ملفات الصور والفيديوهات
+        if ($results->images) {
+            $files = json_decode($results->images, true);
+            if ($files) {
+                foreach ($files as $file) {
+                    $filePath = public_path('assets/files/activity_results/' . $file);
+                    if (file_exists($filePath)) unlink($filePath);
+                }
+            }
+        }
+
         // حذف ملف التقرير
         if ($results->report_file) {
             $filePath = public_path('assets/files/activity_reports/' . $results->report_file);
@@ -449,6 +517,6 @@ class ActivityController extends Controller
 
         $results->delete();
 
-        return redirect()->route('manager.activities.index')->with('success', 'تم حذف نتائج الفعالية بنجاح');
+        //         return redirect()->route('manager.activities.index')->with('success', 'تم حذف نتائج الفعالية بنجاح');
     }
 }

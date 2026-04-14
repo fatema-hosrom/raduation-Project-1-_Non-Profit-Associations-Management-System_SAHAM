@@ -10,25 +10,29 @@
                     <!-- Header -->
                     <div class="mb-8">
                         <h1 class="text-3xl font-bold text-gray-900">تعديل نتائج الفعالية</h1>
-                        <p class="text-gray-500 mt-2">تعديل نتائج فعالية: <span class="font-semibold text-gray-700">{{ $activity->title }}</span></p>
+                        <p class="text-gray-500 mt-2">تعديل نتائج فعالية: <span
+                                class="font-semibold text-gray-700">{{ $activity->title }}</span></p>
                     </div>
 
                     <!-- Messages -->
-                    @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    @if (session('success'))
+                        <div
+                            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
                             <i class="fas fa-check-circle ml-2"></i>
                             {{ session('success') }}
                         </div>
                     @endif
 
-                    @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    @if (session('error'))
+                        <div
+                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
                             <i class="fas fa-exclamation-circle ml-2"></i>
                             {{ session('error') }}
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('manager.activities.results.update', $activity->id) }}" enctype="multipart/form-data" class="space-y-6">
+                    <form method="POST" action="{{ route('manager.activities.results.update', $activity->id) }}"
+                        enctype="multipart/form-data" class="space-y-6">
                         @csrf
                         @method('PUT')
 
@@ -46,7 +50,8 @@
                                         عدد المتطوعين المشاركين فعليًا
                                         <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم يكن محدد)</span>
                                     </label>
-                                    <input type="number" name="total_volunteers" value="{{ old('total_volunteers', $results->total_volunteers) }}"
+                                    <input type="number" name="total_volunteers"
+                                        value="{{ old('total_volunteers', $results->total_volunteers) }}"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                         placeholder="مثال: 25" min="0">
                                     @error('total_volunteers')
@@ -60,7 +65,8 @@
                                         مجموع ساعات العمل التطوعي
                                         <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم يكن محدد)</span>
                                     </label>
-                                    <input type="number" name="total_hours" value="{{ old('total_hours', $results->total_hours) }}"
+                                    <input type="number" name="total_hours"
+                                        value="{{ old('total_hours', $results->total_hours) }}"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                         placeholder="مثال: 150" min="0">
                                     @error('total_hours')
@@ -74,7 +80,8 @@
                                         عدد الحضور
                                         <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم يكن محدد)</span>
                                     </label>
-                                    <input type="number" name="attendance_count" value="{{ old('attendance_count', $results->attendance_count) }}"
+                                    <input type="number" name="attendance_count"
+                                        value="{{ old('attendance_count', $results->attendance_count) }}"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition"
                                         placeholder="مثال: 100" min="0">
                                     @error('attendance_count')
@@ -144,15 +151,21 @@
                                     @enderror
                                 </div>
 
-                                <!-- روابط الصور -->
+                                <!-- صور وفيديوهات الفعالية -->
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        روابط الصور/الفيديوهات
-                                        <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم يكن محدد)</span>
+                                        صور وفيديوهات الفعالية الجديدة
+                                        <span class="text-gray-400 text-xs">(اتركها فارغة إذا لم ترد تغييرها - يمكن رفع عدة
+                                            ملفات)</span>
                                     </label>
-                                    <textarea name="images" rows="3"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-vertical"
-                                        placeholder="أدخل روابط الصور أو الفيديوهات (كل رابط في سطر منفصل)">{{ old('images', $results->images) }}</textarea>
+                                    <input type="file" name="images[]" multiple accept="image/*,video/*"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <p class="text-gray-500 text-xs mt-1">يمكن رفع صور (JPG, PNG, GIF) وفيديوهات (MP4, AVI,
+                                        MOV) بحد أقصى 10 ميجابايت لكل ملف</p>
+                                    @if ($results->images)
+                                        <p class="text-sm text-gray-600 mt-2">سيتم استبدال الملفات الحالية بالملفات الجديدة
+                                        </p>
+                                    @endif
                                     @error('images')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror
@@ -162,13 +175,17 @@
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
                                         ملف التقرير الجديد
-                                        <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم ترد تغييره - PDF, DOC, DOCX)</span>
+                                        <span class="text-gray-400 text-xs">(اتركه فارغًا إذا لم ترد تغييره - PDF, DOC,
+                                            DOCX)</span>
                                     </label>
                                     <input type="file" name="report_file" accept=".pdf,.doc,.docx"
                                         class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                                    @if($results->report_file)
+                                    @if ($results->report_file)
                                         <p class="text-sm text-gray-600 mt-2">
-                                            الملف الحالي: <a href="{{ asset('assets/files/activity_reports/' . $results->report_file) }}" target="_blank" class="text-blue-600 hover:underline">{{ $results->report_file }}</a>
+                                            الملف الحالي: <a
+                                                href="{{ asset('assets/files/activity_reports/' . $results->report_file) }}"
+                                                target="_blank"
+                                                class="text-blue-600 hover:underline">{{ $results->report_file }}</a>
                                         </p>
                                     @endif
                                     @error('report_file')

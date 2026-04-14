@@ -4,7 +4,6 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Manager\ActivityController;
 use App\Http\Controllers\Manager\OrganizationController;
 use App\Http\Middleware\CheckManagerAuth;
-use App\Http\Controllers\Auth\UnifiedAuthController;
 use App\Http\Controllers\Manager\ManagerProfileController;
 
 // Auth routes - توجيه إلى النظام الموحد
@@ -49,6 +48,7 @@ Route::middleware([CheckManagerAuth::class])->prefix('manager')->name('manager.'
 
     // تغيير حالة الفعالية
     Route::post('/activities/toggle-status/{id}', [ActivityController::class, 'toggleStatus'])->name('activities.toggleStatus');
+    Route::post('/activities/change-status/{id}', [ActivityController::class, 'changeStatus'])->name('activities.changeStatus');
 
     // نتائج الفعاليات - صفحة موحدة
     //  عرض البيانات أو نموذج الإضافة أو نموذج التعديل بناءً على وجود النتائج وحالة الفعالية
@@ -70,7 +70,7 @@ Route::middleware([CheckManagerAuth::class])->prefix('manager')->name('manager.'
     Route::post('/activity-volunteers/{activityId}/{assignmentId}/approve', [App\Http\Controllers\Manager\ActivityVolunteersController::class, 'approveVolunteer'])->name('activity_volunteers.approve');
     // رفض طلب تطوع
     Route::post('/activity-volunteers/{activityId}/{assignmentId}/reject', [App\Http\Controllers\Manager\ActivityVolunteersController::class, 'rejectVolunteer'])->name('activity_volunteers.reject');
-    // إزالة متطوع من الفعالية
+    // إز                                                             الة متطوع من الفعالية
     Route::post('/activity-volunteers/{activityId}/{assignmentId}/remove', [App\Http\Controllers\Manager\ActivityVolunteersController::class, 'removeVolunteer'])->name('activity_volunteers.remove');
     // عرض تفاصيل المتطوع
     Route::get('/activity-volunteers/{activityId}/{assignmentId}/details', [App\Http\Controllers\Manager\ActivityVolunteersController::class, 'viewVolunteer'])->name('activity_volunteers.details');

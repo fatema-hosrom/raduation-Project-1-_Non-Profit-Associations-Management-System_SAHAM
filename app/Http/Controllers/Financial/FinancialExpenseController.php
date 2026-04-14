@@ -74,7 +74,8 @@ class FinancialExpenseController extends Controller
             'description' => 'required|string|max:1000',
             'amount' => 'required|numeric|min:0.01',
             'expense_date' => 'required|date',
-            'receipt' => 'nullable|string|max:255',
+            'receipt_number' => 'required|string|max:50|unique:expenses,receipt_number',
+            'receipt' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
         ];
 
         if (! $activityId) {
@@ -85,12 +86,18 @@ class FinancialExpenseController extends Controller
 
         $aid = $activityId ?? $validated['activity_id'];
 
+        $receiptPath = null;
+        if ($request->hasFile('receipt')) {
+            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+        }
+
         Expense::create([
             'activity_id' => $aid,
             'description' => $validated['description'],
             'amount' => $validated['amount'],
             'expense_date' => $validated['expense_date'],
-            'receipt' => $validated['receipt'] ?? null,
+            'receipt_number' => $validated['receipt_number'],
+            'receipt' => $receiptPath,
         ]);
 
         return redirect()->route('financial.expenses.activity.show', $aid)
@@ -123,10 +130,23 @@ class FinancialExpenseController extends Controller
             'description' => 'required|string|max:1000',
             'amount' => 'required|numeric|min:0.01',
             'expense_date' => 'required|date',
-            'receipt' => 'nullable|string|max:255',
+            'receipt_number' => 'required|string|max:50|unique:expenses,receipt_number,' . $expenseId,
+            'receipt' => 'nullable|file|mimes:jpeg,jpg,png,pdf|max:2048',
         ]);
 
-        $expense->update($validated);
+        $updateData = [
+            'description' => $validated['description'],
+            'amount' => $validated['amount'],
+            'expense_date' => $validated['expense_date'],
+            'receipt_number' => $validated['receipt_number'],
+        ];
+
+        if ($request->hasFile('receipt')) {
+            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+            $updateData['receipt'] = $receiptPath;
+        }
+
+        $expense->update($updateData);
 
         return redirect()->route('financial.expenses.activity.show', $activityId)
             ->with('success', 'تم تحديث المصروف بنجاح');

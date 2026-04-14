@@ -10,25 +10,29 @@
                     <!-- Header -->
                     <div class="mb-8">
                         <h1 class="text-3xl font-bold text-gray-900">إضافة نتائج الفعالية</h1>
-                        <p class="text-gray-500 mt-2">إضافة نتائج فعالية: <span class="font-semibold text-gray-700">{{ $activity->title }}</span></p>
+                        <p class="text-gray-500 mt-2">إضافة نتائج فعالية: <span
+                                class="font-semibold text-gray-700">{{ $activity->title }}</span></p>
                     </div>
 
                     <!-- Messages -->
-                    @if(session('success'))
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    @if (session('success'))
+                        <div
+                            class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg mb-6 flex items-center">
                             <i class="fas fa-check-circle ml-2"></i>
                             {{ session('success') }}
                         </div>
                     @endif
 
-                    @if(session('error'))
-                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
+                    @if (session('error'))
+                        <div
+                            class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg mb-6 flex items-center">
                             <i class="fas fa-exclamation-circle ml-2"></i>
                             {{ session('error') }}
                         </div>
                     @endif
 
-                    <form method="POST" action="{{ route('manager.activities.results.store', $activity->id) }}" enctype="multipart/form-data" class="space-y-6">
+                    <form method="POST" action="{{ route('manager.activities.results.store', $activity->id) }}"
+                        enctype="multipart/form-data" class="space-y-6">
                         @csrf
 
                         <!-- معلومات التطوع -->
@@ -143,15 +147,16 @@
                                     @enderror
                                 </div>
 
-                                <!-- روابط الصور -->
+                                <!-- صور وفيديوهات الفعالية -->
                                 <div>
                                     <label class="block text-sm font-semibold text-gray-700 mb-2">
-                                        روابط الصور/الفيديوهات
-                                        <span class="text-gray-400 text-xs">(اختياري)</span>
+                                        صور وفيديوهات الفعالية
+                                        <span class="text-gray-400 text-xs">(اختياري - يمكن رفع عدة ملفات)</span>
                                     </label>
-                                    <textarea name="images" rows="3"
-                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition resize-vertical"
-                                        placeholder="أدخل روابط الصور أو الفيديوهات (كل رابط في سطر منفصل)">{{ old('images') }}</textarea>
+                                    <input type="file" name="images[]" multiple accept="image/*,video/*"
+                                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                                    <p class="text-gray-500 text-xs mt-1">يمكن رفع صور (JPG, PNG, GIF) وفيديوهات (MP4, AVI,
+                                        MOV) بحد أقصى 10 ميجابايت لكل ملف</p>
                                     @error('images')
                                         <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                                     @enderror

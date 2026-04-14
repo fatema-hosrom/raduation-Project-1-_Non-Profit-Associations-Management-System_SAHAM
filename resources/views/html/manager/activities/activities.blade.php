@@ -53,6 +53,19 @@
             font-weight: 500;
             margin-left: 8px;
         }
+
+        .dropdown-item.active {
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+
+        .dropdown-menu {
+            text-align: right;
+        }
+
+        .dropdown-item i {
+            margin-left: 8px;
+        }
     </style>
 @endpush
 
@@ -163,16 +176,54 @@
                                     <i class="fas fa-trash"></i> حذف
                                 </button>
 
-                                {{-- زر تغيير حالة الفعالية --}}
-                                <form method="POST"
-                                    action="{{ route('manager.activities.toggleStatus', $activity->id ?? $activity['id']) }}"
-                                    style="display:inline;">
-                                    @csrf
-                                    <button type="submit" class="btn action-btn status-btn"
-                                        style="background-color: #f5cf27; color: white; border: none;">
+                                {{-- قائمة منسدلة تغيير حالة الفعالية --}}
+                                <div class="dropdown" style="display:inline-block;">
+                                    <button class="btn action-btn status-btn dropdown-toggle"
+                                        style="background-color: #f5cf27; color: white; border: none;" type="button"
+                                        id="statusDropdown{{ $activity->id ?? $activity['id'] }}" data-bs-toggle="dropdown"
+                                        aria-expanded="false">
                                         <i class="fas fa-exchange-alt"></i> تغيير الحالة
                                     </button>
-                                </form>
+                                    <ul class="dropdown-menu dropdown-menu-end"
+                                        aria-labelledby="statusDropdown{{ $activity->id ?? $activity['id'] }}">
+                                        <li>
+                                            <form method="POST"
+                                                action="{{ route('manager.activities.changeStatus', $activity->id ?? $activity['id']) }}"
+                                                style="display:inline;">
+                                                @csrf
+                                                <input type="hidden" name="status" value="draft">
+                                                <button type="submit"
+                                                    class="dropdown-item {{ $status === 'draft' ? 'active' : '' }}">
+                                                    <i class="fas fa-circle text-secondary"></i> مسودة
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form method="POST"
+                                                action="{{ route('manager.activities.changeStatus', $activity->id ?? $activity['id']) }}"
+                                                style="display:inline;">
+                                                @csrf
+                                                <input type="hidden" name="status" value="active">
+                                                <button type="submit"
+                                                    class="dropdown-item {{ $status === 'active' ? 'active' : '' }}">
+                                                    <i class="fas fa-circle text-success"></i> نشطة
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form method="POST"
+                                                action="{{ route('manager.activities.changeStatus', $activity->id ?? $activity['id']) }}"
+                                                style="display:inline;">
+                                                @csrf
+                                                <input type="hidden" name="status" value="closed">
+                                                <button type="submit"
+                                                    class="dropdown-item {{ $status === 'closed' ? 'active' : '' }}">
+                                                    <i class="fas fa-circle text-danger"></i> مغلقة
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
 
                                 <form method="POST"
                                     action="{{ route('manager.activities.togglePublish', $activity->id ?? $activity['id']) }}"

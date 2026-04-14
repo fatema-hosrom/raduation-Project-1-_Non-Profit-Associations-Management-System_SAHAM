@@ -78,7 +78,7 @@
                         <!-- الأهداف والتحديات -->
                         <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
                             <h2 class="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                                
+
                                 الأهداف والتحديات
                             </h2>
 
@@ -114,20 +114,60 @@
                                     </div>
                                 </div>
 
-                                <!-- الصور -->
+                                <!-- الصور والفيديوهات -->
                                 @if ($results->images)
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900 mb-3">الصور والفيديوهات</h3>
                                         <div class="bg-gray-50 p-4 rounded-lg">
-                                            @foreach (explode("\n", $results->images) as $link)
-                                                @if (trim($link))
-                                                    <a href="{{ trim($link) }}" target="_blank"
-                                                        class="inline-block bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm hover:bg-blue-200 transition mr-2 mb-2">
-                                                        <i class="fas fa-external-link-alt ml-1"></i>
-                                                        رابط {{ $loop->iteration }}
-                                                    </a>
-                                                @endif
-                                            @endforeach
+                                            @php
+                                                $files = json_decode($results->images, true);
+                                            @endphp
+                                            @if ($files && is_array($files))
+                                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                                    @foreach ($files as $file)
+                                                        @php
+                                                            $filePath = 'assets/files/activity_results/' . $file;
+                                                            $fileExtension = strtolower(
+                                                                pathinfo($file, PATHINFO_EXTENSION),
+                                                            );
+                                                            $isImage = in_array($fileExtension, [
+                                                                'jpg',
+                                                                'jpeg',
+                                                                'png',
+                                                                'gif',
+                                                            ]);
+                                                            $isVideo = in_array($fileExtension, ['mp4', 'avi', 'mov']);
+                                                        @endphp
+                                                        @if ($isImage)
+                                                            <div class="relative">
+                                                                <img src="{{ asset($filePath) }}" alt="صورة الفعالية"
+                                                                    class="w-full h-48 object-cover rounded-lg shadow-sm">
+                                                                <a href="{{ asset($filePath) }}" target="_blank"
+                                                                    class="absolute top-2 left-2 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
+                                                                    <i class="fas fa-external-link-alt text-sm"></i>
+                                                                </a>
+                                                            </div>
+                                                        @elseif($isVideo)
+                                                            <div class="relative">
+                                                                <video controls
+                                                                    class="w-full h-48 object-cover rounded-lg shadow-sm">
+                                                                    <source src="{{ asset($filePath) }}"
+                                                                        type="video/{{ $fileExtension }}">
+                                                                    متصفحك لا يدعم تشغيل الفيديو.
+                                                                </video>
+                                                            </div>
+                                                        @else
+                                                            <div class="bg-white p-4 rounded-lg border">
+                                                                <i class="fas fa-file text-gray-400 text-2xl mb-2"></i>
+                                                                <p class="text-sm text-gray-600">{{ $file }}</p>
+                                                                <a href="{{ asset($filePath) }}" target="_blank"
+                                                                    class="text-blue-600 hover:text-blue-800 text-sm">عرض
+                                                                    الملف</a>
+                                                            </div>
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @endif

@@ -21,6 +21,12 @@
     @include('templates.navbar_financial')
 
     <main class="main-content">
+        @if (session('success'))
+            <div id="successMessage"
+                class="mx-auto my-4 max-w-4xl rounded-lg bg-green-100 border border-green-400 px-4 py-3 text-green-800 shadow-sm">
+                {{ session('success') }}
+            </div>
+        @endif
         @yield('content')
     </main>
 

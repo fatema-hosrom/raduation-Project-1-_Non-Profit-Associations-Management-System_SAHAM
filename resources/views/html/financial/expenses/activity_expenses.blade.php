@@ -51,7 +51,8 @@
             <table class="w-full table-fixed">
                 <thead>
                     <tr class="bg-gray-100 text-gray-700 text-sm">
-                        <th class="px-4 py-3 text-right w-1/3">الوصف</th>
+                        <th class="px-4 py-3 text-right w-1/4">الوصف</th>
+                        <th class="px-4 py-3 text-center w-24">رقم الإيصال</th>
                         <th class="px-4 py-3 text-center w-20">المبلغ</th>
                         <th class="px-4 py-3 text-center w-28">التاريخ</th>
                         <th class="px-4 py-3 text-center w-36">إجراءات</th>
@@ -61,6 +62,8 @@
                     @forelse($expenses as $exp)
                         <tr class="hover:bg-gray-50 transition">
                             <td class="px-4 py-3 text-gray-700 truncate">{{ $exp->description }}</td>
+                            <td class="px-4 py-3 text-center font-mono text-blue-700">
+                                {{ $exp->receipt_number ?? 'غير محدد' }}</td>
                             <td class="px-4 py-3 text-center font-semibold text-green-700">
                                 {{ number_format($exp->amount, 2) }}</td>
                             <td class="px-4 py-3 text-center text-gray-600">{{ $exp->expense_date }}</td>
@@ -78,7 +81,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="py-6 text-center text-gray-500">
+                            <td colspan="5" class="py-6 text-center text-gray-500">
                                 لا توجد مصاريف
                             </td>
                         </tr>
