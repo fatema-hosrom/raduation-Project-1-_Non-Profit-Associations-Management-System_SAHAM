@@ -1,141 +1,138 @@
-📄 التقرير الكامل للنظام:
-👉[تحميل تقرير النظام كامل](./تقرير النظام كامل.pdf)
-
-
-🌟 ساهم – منصة إدارة الفعاليات والجمعيات والمتطوعين
-
-ساهم هو نظام رقمي متكامل يهدف إلى تنظيم العمل التطوعي وربط الجمعيات بالفعاليات والمتطوعين ضمن منصة واحدة حديثة وسهلة الاستخدام.
-يوفر المشروع واجهة عامة للزوار والمتطوعين، ولوحة تحكم إدارية للمشرفين والمديرين، مع تصميم قابل للتوسع وإضافة خدمات مستقبلية.
+📄 **Full System Report:**
+👉 [Download Full System Report](./Graduation Project Report 2.pdf)
 
 ---
 
-📌 فكرة المشروع
+🌟 **Sahem – Event, Organization, and Volunteer Management Platform**
 
-تحتاج الجمعيات إلى وسيلة فعّالة لعرض فعالياتها وإدارة المتطوعين، بينما يبحث المتطوعون عن منصة موحدة تعرض الفعاليات بشكل واضح وسهل.
-من هنا جاءت فكرة ساهم ليكون حلًا شاملًا يجمع:
-
-• الجمعيات
-• الفعاليات
-• المتطوعين
-• الإدارة
-• الواجهة العامة
-
-
-في نظام واحد منظم ومرن.
+**Sahem** is an integrated digital system designed to organize volunteer work and connect organizations with events and volunteers within a single, modern, and user-friendly platform.
+The project provides a public interface for visitors and volunteers, along with an administrative dashboard for supervisors and managers, featuring a scalable design that supports future service expansion.
 
 ---
 
-🎯 أهداف المشروع
+📌 **Project Idea**
 
-• توفير منصة موحدة لعرض الفعاليات والجمعيات.
-• تسهيل تسجيل المتطوعين مع نظام موافقات واضح.
-• تمكين المشرفين من إدارة الفعاليات والجمعيات بسهولة.
-• تقديم واجهة عامة جذابة وسهلة الاستخدام.
-• بناء أساس قوي للتوسع المستقبلي (التبرعات – طلبات التطوع – التقارير – تطبيق جوال).
+Organizations need an effective way to showcase their events and manage volunteers, while volunteers are looking for a unified platform that presents events clearly and easily.
+This is where **Sahem** comes in as a comprehensive solution that brings together:
 
+• Organizations
+• Events
+• Volunteers
+• Administration
+• Public Interface
 
----
-
-🧩 المزايا الأساسية (Features)
-
-👤 للمستخدم (الزائر والمتطوع)
-
-• إنشاء حساب متطوع (مع مراجعة المشرف قبل التفعيل).
-• عرض الفعاليات الحالية المنشورة والنشطة فقط.
-• استعراض تفاصيل الفعالية (الوصف، التاريخ، المكان، النوع).
-• عرض قائمة الجمعيات.
-• عرض الفعاليات المرتبطة بكل جمعية.
-• استعراض تفاصيل فعالية مرتبطة بجمعية.
-
-
-🛠️ للمشرف والمدير
-
-• إدارة الجمعيات (إضافة – تعديل – حذف – عرض).
-• إدارة الفعاليات (إضافة – تعديل – حذف – نشر – إيقاف نشر).
-• مراجعة طلبات المتطوعين والموافقة عليها أو رفضها.
-• إدارة إعدادات التطوع لكل فعالية.
-• التحكم الكامل في ظهور الفعاليات للزوار.
-
+All within one structured and flexible system.
 
 ---
 
-🏗️ هيكلية المشروع (Architecture Overview)
+🎯 **Project Objectives**
 
-1. الواجهة العامة (Public Frontend)
-
-• صفحة رئيسية تعريفية
-• قائمة الجمعيات
-• قائمة الفعاليات
-• صفحة تفاصيل الفعالية
-• صفحة تفاصيل الجمعية
-• صفحة تسجيل المتطوع
-
-
-2. لوحة التحكم (Admin Dashboard)
-
-• إدارة الجمعيات
-• إدارة الفعاليات
-• إدارة المتطوعين
-• نظام الموافقات
-• التحكم بالنشر
-
-
-3. قاعدة البيانات (Database Layer)
-
-تعتمد المنصة على جداول مترابطة بوضوح، أهمها:
-
-‏ORGANIZATION
-
-بيانات الجمعيات.
-
-‏ORGANIZATION_EVENT
-
-فعاليات مرتبطة بالجمعيات.
-
-‏ORGANIZATION_ACTIVITY
-
-الفعالية نفسها (الوصف – التاريخ – النوع – النشر).
-
-‏ACTIVITY_VOLUNTEER_REQUIREMENTS
-
-شروط التطوع لكل فعالية.
-
-‏VOLUNTEER
-
-بيانات المتطوعين مع نظام الموافقة.
+• Provide a unified platform to display events and organizations.
+• Simplify volunteer registration with a clear approval system.
+• Enable supervisors to manage events and organizations بسهولة.
+• Offer an attractive and user-friendly public interface.
+• Build a strong foundation for future expansion (donations – volunteer requests – reports – mobile app).
 
 ---
 
-🔄 دورة العمل (Workflow)
+🧩 **Core Features**
 
-1. تسجيل المتطوع
+👤 **For Users (Visitors & Volunteers)**
 
-• يدخل المستخدم بياناته عبر نموذج التسجيل.
-• يتم حفظ البيانات بحالة pending.
-
-
-2. مراجعة المشرف
-
-• المشرف يراجع الطلب.
-• يقرر الموافقة أو الرفض.
-• يتم تحديث حالة الحساب accordingly.
-
-
-3. تفعيل الحساب
-
-• عند الموافقة → يصبح المتطوع قادرًا على المشاركة.
-• عند الرفض → يظهر له سبب الرفض.
-
+• Create a volunteer account (subject to supervisor approval before activation).
+• View only current and active published events.
+• Browse event details (description, date, location, type).
+• View the list of organizations.
+• View events associated with each organization.
+• Browse details of organization-related events.
 
 ---
 
-🚀 خارطة الطريق (Roadmap)
+🛠️ **For Supervisors & Admins**
 
-• إضافة نظام التبرعات.
-• إضافة طلبات التطوع وربطها بالفعاليات.
-• نظام تقارير متقدم.
-• تطبيق جوال للمتطوعين.
-• لوحة تحكم للجهات الحكومية الداعمة.
+• Manage organizations (create – update – delete – view).
+• Manage events (create – update – delete – publish – unpublish).
+• Review volunteer applications and approve or reject them.
+• Manage volunteer requirements for each event.
+• Full control over event visibility for users.
+
+---
+
+🏗️ **Architecture Overview**
+
+1. **Public Frontend**
+
+• Landing page
+• Organizations list
+• Events list
+• Event details page
+• Organization details page
+• Volunteer registration page
+
+---
+
+2. **Admin Dashboard**
+
+• Organization management
+• Event management
+• Volunteer management
+• Approval system
+• Publishing control
+
+---
+
+3. **Database Layer**
+
+The platform relies on clearly structured relational tables, أبرزها:
+
+**ORGANIZATION**
+Organization data
+
+**ORGANIZATION_EVENT**
+Events linked to organizations
+
+**ORGANIZATION_ACTIVITY**
+Event details (description – date – type – publication status)
+
+**ACTIVITY_VOLUNTEER_REQUIREMENTS**
+Volunteer requirements for each event
+
+**VOLUNTEER**
+Volunteer data with approval system
+
+---
+
+🔄 **Workflow**
+
+1. **Volunteer Registration**
+
+• User submits their information via the registration form.
+• Data is stored with a *pending* status.
+
+---
+
+2. **Supervisor Review**
+
+• Supervisor reviews the request.
+• Decides to approve or reject.
+• Account status is updated accordingly.
+
+---
+
+3. **Account Activation**
+
+• If approved → the volunteer can participate.
+• If rejected → the reason for rejection is shown.
+
+---
+
+🚀 **Roadmap**
+
+• Add a donation system
+• Add volunteer requests linked to events
+• Advanced reporting system
+• Mobile app for volunteers
+• Dashboard for supporting government entities
 
 
 ---
